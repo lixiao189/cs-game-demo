@@ -1,9 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
 type Game struct {
@@ -18,12 +21,16 @@ type Game struct {
 func (g *Game) Update() error {
 	playerSpaceShip := g.SpaceShips[g.PlayerName]
 	if ebiten.IsKeyPressed(ebiten.KeyA) {
+		playerSpaceShip.Direction = LEFT
 		playerSpaceShip.X -= playerSpaceShip.Speed
 	} else if ebiten.IsKeyPressed(ebiten.KeyD) {
+		playerSpaceShip.Direction = RIGHT
 		playerSpaceShip.X += playerSpaceShip.Speed
 	} else if ebiten.IsKeyPressed(ebiten.KeyW) {
+		playerSpaceShip.Direction = UP
 		playerSpaceShip.Y -= playerSpaceShip.Speed
 	} else if ebiten.IsKeyPressed(ebiten.KeyS) {
+		playerSpaceShip.Direction = DOWN
 		playerSpaceShip.Y += playerSpaceShip.Speed
 	}
 
@@ -31,9 +38,28 @@ func (g *Game) Update() error {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
+	// debug
+	ebitenutil.DebugPrint(screen, fmt.Sprint(g.SpaceShips[g.PlayerName].X, g.SpaceShips[g.PlayerName].Y))
+
 	for _, spaceShip := range g.SpaceShips {
 		op := &ebiten.DrawImageOptions{}
+
+		// Rotate the space ship
+		op.GeoM.Reset()
+		op.GeoM.Translate(-float64(spaceShip.Width)/2, -float64(spaceShip.Height)/2)
+		if spaceShip.Direction == LEFT {
+			op.GeoM.Rotate(math.Pi * 3 / 2)
+		} else if spaceShip.Direction == RIGHT {
+			op.GeoM.Rotate(math.Pi / 2)
+		} else if spaceShip.Direction == UP {
+			op.GeoM.Rotate(0)
+		} else if spaceShip.Direction == DOWN {
+			op.GeoM.Rotate(math.Pi)
+		}
+
+		// Move to the right place
 		op.GeoM.Translate(spaceShip.X, spaceShip.Y)
+
 		screen.DrawImage(spaceShip.Image, op)
 	}
 }

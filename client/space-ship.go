@@ -11,8 +11,18 @@ import (
 	"github.com/lixiao189/cs-game-demo/client/resources"
 )
 
+const (
+	UP    = 0
+	DOWN  = 1
+	LEFT  = 2
+	RIGHT = 3
+)
+
 type Spaceship struct {
 	Image *ebiten.Image
+
+	// Space ship theta
+	Direction int
 
 	// Space ship position
 	X float64
@@ -31,12 +41,13 @@ type Spaceship struct {
 
 func NewSpaceShip(x float64, y float64, speed float64, height int, width int, name string) *Spaceship {
 	spaceShip := Spaceship{
-		X:      x,
-		Y:      y,
-		Speed: speed,
-		Height: height,
-		Width:  width,
-		Name:   name,
+		X:         x,
+		Y:         y,
+		Direction: UP,
+		Speed:     speed,
+		Height:    height,
+		Width:     width,
+		Name:      name,
 	}
 	img, _, err := image.Decode(bytes.NewReader(resources.SpaceshipImg))
 	if err != nil {
