@@ -1,4 +1,4 @@
-package main
+package shape
 
 import (
 	"bytes"
@@ -8,7 +8,7 @@ import (
 	"os"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/lixiao189/cs-game-demo/client/resources"
+	"github.com/lixiao189/cs-game-demo/resources"
 )
 
 const (

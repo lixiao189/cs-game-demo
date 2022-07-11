@@ -1,4 +1,4 @@
-module github.com/lixiao189/cs-game-demo/client
+module github.com/lixiao189/cs-game-demo
 
 go 1.18
 

@@ -1,7 +1,7 @@
 .PHONY: client run-client
 
-client:
-	go build -o client.out \
+build:
+	go build -o game.out
 
-run-client: client
-	./client.out
+run-client: 
+	go run main.go

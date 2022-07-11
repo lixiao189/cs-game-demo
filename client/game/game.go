@@ -1,4 +1,4 @@
-package main
+package game
 
 import (
 	"fmt"
@@ -7,10 +7,11 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/lixiao189/cs-game-demo/client/shape"
 )
 
 type Game struct {
-	SpaceShips map[string]*Spaceship
+	SpaceShips map[string]*shape.Spaceship
 	PlayerName string
 
 	// Window size
@@ -21,16 +22,16 @@ type Game struct {
 func (g *Game) Update() error {
 	playerSpaceShip := g.SpaceShips[g.PlayerName]
 	if ebiten.IsKeyPressed(ebiten.KeyA) {
-		playerSpaceShip.Direction = LEFT
+		playerSpaceShip.Direction = shape.LEFT
 		playerSpaceShip.X -= playerSpaceShip.Speed
 	} else if ebiten.IsKeyPressed(ebiten.KeyD) {
-		playerSpaceShip.Direction = RIGHT
+		playerSpaceShip.Direction = shape.RIGHT
 		playerSpaceShip.X += playerSpaceShip.Speed
 	} else if ebiten.IsKeyPressed(ebiten.KeyW) {
-		playerSpaceShip.Direction = UP
+		playerSpaceShip.Direction = shape.UP
 		playerSpaceShip.Y -= playerSpaceShip.Speed
 	} else if ebiten.IsKeyPressed(ebiten.KeyS) {
-		playerSpaceShip.Direction = DOWN
+		playerSpaceShip.Direction = shape.DOWN
 		playerSpaceShip.Y += playerSpaceShip.Speed
 	}
 
@@ -47,13 +48,13 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		// Rotate the space ship
 		op.GeoM.Reset()
 		op.GeoM.Translate(-float64(spaceShip.Width)/2, -float64(spaceShip.Height)/2)
-		if spaceShip.Direction == LEFT {
+		if spaceShip.Direction == shape.LEFT {
 			op.GeoM.Rotate(math.Pi * 3 / 2)
-		} else if spaceShip.Direction == RIGHT {
+		} else if spaceShip.Direction == shape.RIGHT {
 			op.GeoM.Rotate(math.Pi / 2)
-		} else if spaceShip.Direction == UP {
+		} else if spaceShip.Direction == shape.UP {
 			op.GeoM.Rotate(0)
-		} else if spaceShip.Direction == DOWN {
+		} else if spaceShip.Direction == shape.DOWN {
 			op.GeoM.Rotate(math.Pi)
 		}
 
@@ -76,6 +77,6 @@ func (g *Game) InitGame() {
 
 	// Init game system
 	g.PlayerName = playerName
-	g.SpaceShips = make(map[string]*Spaceship)
-	g.SpaceShips[playerName] = NewSpaceShip(float64(g.Width)/2, float64(g.Height)/2, 3, 64, 32, playerName)
+	g.SpaceShips = make(map[string]*shape.Spaceship)
+	g.SpaceShips[playerName] = shape.NewSpaceShip(float64(g.Width)/2, float64(g.Height)/2, 3, 64, 32, playerName)
 }
