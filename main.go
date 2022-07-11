@@ -8,14 +8,11 @@ import (
 )
 
 func main() {
+	// Client initialize and startup code
 	game := game.Game{
 		Height: 640,
 		Width:  1024,
 	}
-
-	ebiten.SetWindowSize(game.Width, game.Height)
-	ebiten.SetWindowTitle("Space ship Demo!")
-
 	game.InitGame()
 	if err := ebiten.RunGame(&game); err != nil {
 		log.Fatal(err)

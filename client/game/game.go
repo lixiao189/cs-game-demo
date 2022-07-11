@@ -79,4 +79,8 @@ func (g *Game) InitGame() {
 	g.PlayerName = playerName
 	g.SpaceShips = make(map[string]*shape.Spaceship)
 	g.SpaceShips[playerName] = shape.NewSpaceShip(float64(g.Width)/2, float64(g.Height)/2, 3, 64, 32, playerName)
+
+	// Init ebiten window's setting
+	ebiten.SetWindowSize(g.Width, g.Height)
+	ebiten.SetWindowTitle("Space ship Demo!")
 }
