@@ -16,11 +16,22 @@ type Game struct {
 }
 
 func (g *Game) Update() error {
+	playerSpaceShip := g.SpaceShips[g.PlayerName]
+	if ebiten.IsKeyPressed(ebiten.KeyA) {
+		playerSpaceShip.X -= playerSpaceShip.Speed
+	} else if ebiten.IsKeyPressed(ebiten.KeyD) {
+		playerSpaceShip.X += playerSpaceShip.Speed
+	} else if ebiten.IsKeyPressed(ebiten.KeyW) {
+		playerSpaceShip.Y -= playerSpaceShip.Speed
+	} else if ebiten.IsKeyPressed(ebiten.KeyS) {
+		playerSpaceShip.Y += playerSpaceShip.Speed
+	}
+
 	return nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	for _, spaceShip := range(g.SpaceShips) {
+	for _, spaceShip := range g.SpaceShips {
 		op := &ebiten.DrawImageOptions{}
 		op.GeoM.Translate(spaceShip.X, spaceShip.Y)
 		screen.DrawImage(spaceShip.Image, op)
@@ -40,5 +51,5 @@ func (g *Game) InitGame() {
 	// Init game system
 	g.PlayerName = playerName
 	g.SpaceShips = make(map[string]*Spaceship)
-	g.SpaceShips[playerName] = NewSpaceShip(float64(g.Width)/2, float64(g.Height)/2, 64, 32, playerName)
+	g.SpaceShips[playerName] = NewSpaceShip(float64(g.Width)/2, float64(g.Height)/2, 3, 64, 32, playerName)
 }

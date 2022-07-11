@@ -18,6 +18,9 @@ type Spaceship struct {
 	X float64
 	Y float64
 
+	// Space ship speed
+	Speed float64
+
 	// Space ship size
 	Height int
 	Width  int
@@ -26,10 +29,11 @@ type Spaceship struct {
 	Name string
 }
 
-func NewSpaceShip(x float64, y float64, height int, width int, name string) *Spaceship {
+func NewSpaceShip(x float64, y float64, speed float64, height int, width int, name string) *Spaceship {
 	spaceShip := Spaceship{
 		X:      x,
 		Y:      y,
+		Speed: speed,
 		Height: height,
 		Width:  width,
 		Name:   name,
