@@ -15,8 +15,8 @@ type Spaceship struct {
 	Image *ebiten.Image
 
 	// Space ship position
-	X int
-	Y int
+	X float64
+	Y float64
 
 	// Space ship size
 	Height int
@@ -26,7 +26,7 @@ type Spaceship struct {
 	Name string
 }
 
-func NewSpaceShip(x int, y int, height int, width int, name string) *Spaceship {
+func NewSpaceShip(x float64, y float64, height int, width int, name string) *Spaceship {
 	spaceShip := Spaceship{
 		X:      x,
 		Y:      y,
