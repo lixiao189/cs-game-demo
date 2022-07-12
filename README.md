@@ -7,11 +7,12 @@
 **客户端**
 
 ```bash
-make run-client
+make run-client  # start up first client
+make run-client1 # start up another client
 ```
 
 **服务端**
 
 ```
-TODO
+make run-server
 ```
