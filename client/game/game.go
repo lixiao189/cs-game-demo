@@ -1,12 +1,13 @@
 package game
 
+// TODO Closing connection gracefully
+
 import (
 	"fmt"
 	"log"
 	"math"
 	"net"
 	"os"
-	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -49,7 +50,7 @@ func (g *Game) Update() error {
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	// debug
-	ebitenutil.DebugPrint(screen, fmt.Sprint(g.SpaceShips[g.PlayerName].X, g.SpaceShips[g.PlayerName].Y))
+	ebitenutil.DebugPrint(screen, fmt.Sprintf("%v\n%v %v", g.PlayerName, g.SpaceShips[g.PlayerName].X, g.SpaceShips[g.PlayerName].Y))
 
 	for _, spaceShip := range g.SpaceShips {
 		op := &ebiten.DrawImageOptions{}
@@ -78,11 +79,11 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 	return g.Width, g.Height
 }
 
-func (g *Game) InitGame() {
+func (g *Game) InitGame(name string) {
 	log.Println("Game started")
 
 	// Player's name
-	playerName := "node"
+	playerName := name
 
 	// Init game system
 	g.PlayerName = playerName
@@ -99,9 +100,9 @@ func (g *Game) InitGame() {
 	ebiten.SetWindowTitle("Space ship Demo!")
 
 	// Running game
-	// if err := ebiten.RunGame(g); err != nil {
-	// 	log.Fatal(err)
-	// }
+	if err := ebiten.RunGame(g); err != nil {
+		log.Fatal(err)
+	}
 
 	// Connect to server host
 	raddr := fmt.Sprintf("%v:%v", g.Host, g.Port)
@@ -111,6 +112,4 @@ func (g *Game) InitGame() {
 		os.Exit(-1)
 	}
 	g.ClientConn = clientConn
-	g.ClientConn.Write([]byte(g.PlayerName + " " + time.Now().String()))
-	time.Sleep(time.Second)
 }

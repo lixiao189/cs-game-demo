@@ -11,7 +11,8 @@ import (
 var opts struct {
 	// Slice of bool will append 'true' each time the option
 	// is encountered (can be set multiple times, like -vvv)
-	Deamon bool `short:"d" long:"deamon" description:"Whether working on deamon server"`
+	Deamon bool   `short:"d" long:"deamon" description:"Whether working on deamon server"`
+	Name   string `short:"n" long:"name" description:"Username of the player"`
 }
 
 func main() {
@@ -29,9 +30,9 @@ func main() {
 		game := game.Game{
 			Height: 640,
 			Width:  1024,
-			Host: "127.0.0.1",
-			Port: 1234,
+			Host:   "127.0.0.1",
+			Port:   1234,
 		}
-		game.InitGame()
+		game.InitGame(opts.Name)
 	}
 }

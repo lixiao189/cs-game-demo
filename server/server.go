@@ -1,5 +1,7 @@
 package server
 
+// TODO Closing connection gracefully
+
 import (
 	"fmt"
 	"log"
