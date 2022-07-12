@@ -4,10 +4,14 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"net"
+	"os"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/lixiao189/cs-game-demo/client/shape"
+	"github.com/xtaci/kcp-go/v5"
 )
 
 type Game struct {
@@ -17,6 +21,11 @@ type Game struct {
 	// Window size
 	Height int
 	Width  int
+
+	// Server host info
+	Host       string
+	Port       int
+	ClientConn net.Conn
 }
 
 func (g *Game) Update() error {
@@ -78,9 +87,30 @@ func (g *Game) InitGame() {
 	// Init game system
 	g.PlayerName = playerName
 	g.SpaceShips = make(map[string]*shape.Spaceship)
-	g.SpaceShips[playerName] = shape.NewSpaceShip(float64(g.Width)/2, float64(g.Height)/2, 3, 64, 32, playerName)
+	g.SpaceShips[playerName] = shape.NewSpaceShip(
+		float64(g.Width)/2,
+		float64(g.Height)/2,
+		3, 64, 32,
+		playerName,
+	)
 
 	// Init ebiten window's setting
 	ebiten.SetWindowSize(g.Width, g.Height)
 	ebiten.SetWindowTitle("Space ship Demo!")
+
+	// Running game
+	// if err := ebiten.RunGame(g); err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// Connect to server host
+	raddr := fmt.Sprintf("%v:%v", g.Host, g.Port)
+	clientConn, err := kcp.Dial(raddr)
+	if err != nil {
+		log.Fatal(err)
+		os.Exit(-1)
+	}
+	g.ClientConn = clientConn
+	g.ClientConn.Write([]byte(g.PlayerName + " " + time.Now().String()))
+	time.Sleep(time.Second)
 }

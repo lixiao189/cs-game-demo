@@ -1,12 +1,11 @@
 package main
 
 import (
-	"log"
 	"os"
 
-	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/jessevdk/go-flags"
 	"github.com/lixiao189/cs-game-demo/client/game"
+	"github.com/lixiao189/cs-game-demo/server"
 )
 
 var opts struct {
@@ -23,17 +22,16 @@ func main() {
 	}
 
 	if opts.Deamon {
-		log.Println("Running on server mode")
-		
+		// Server initialize
+		server.ServerInit("127.0.0.1", 1234)
 	} else {
 		// Client initialize and startup code
 		game := game.Game{
 			Height: 640,
 			Width:  1024,
+			Host: "127.0.0.1",
+			Port: 1234,
 		}
 		game.InitGame()
-		if err := ebiten.RunGame(&game); err != nil {
-			log.Fatal(err)
-		}
 	}
 }
