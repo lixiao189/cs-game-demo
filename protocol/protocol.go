@@ -1,7 +1,5 @@
 package protocol
 
-import "github.com/lixiao189/cs-game-demo/shape"
-
 type Pack struct {
 	Type string `json:"type"`
 	Data any    `json:"data"`
@@ -26,5 +24,10 @@ const (
 )
 
 type SpaceshipData struct {
-	shape.Spaceship
+	X      float64 `json:"x"`
+	Y      float64 `json:"y"`
+	Speed  float64 `json:"speed"`
+	Height int `json:"height"`
+	Width  int `json:"width"`
+	Name   string `json:"name"`
 }
