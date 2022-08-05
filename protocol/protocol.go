@@ -1,8 +1,14 @@
 package protocol
 
-type Pack struct {
-	Type string `json:"type"`
-	Data any    `json:"data"`
+import "encoding/json"
+
+func GeneratePack(packType string, data map[string]any) ([]byte, error) {
+	packBytes, err := json.Marshal(map[string]any{
+		"type": packType,
+		"data": data,
+	})
+
+	return packBytes, err
 }
 
 /*  ============================================================= */
@@ -12,8 +18,10 @@ const (
 	PlayerJoinType = "join"
 )
 
-type JoinData struct {
-	Name string `json:"name"`
+func GenerateJoinPack(playerName string) ([]byte, error) {
+	return GeneratePack(PlayerJoinType, map[string]any{
+		"name": playerName,
+	})
 }
 
 /*  ============================================================= */
@@ -23,11 +31,3 @@ const (
 	InitSpaceshipType = "init-spaceship"
 )
 
-type SpaceshipData struct {
-	X      float64 `json:"x"`
-	Y      float64 `json:"y"`
-	Speed  float64 `json:"speed"`
-	Height int `json:"height"`
-	Width  int `json:"width"`
-	Name   string `json:"name"`
-}

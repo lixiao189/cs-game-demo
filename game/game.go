@@ -3,7 +3,6 @@ package game
 // TODO Closing connection gracefully
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"math"
@@ -14,7 +13,6 @@ import (
 	"github.com/lixiao189/cs-game-demo/protocol"
 	"github.com/lixiao189/cs-game-demo/shape"
 	"github.com/lixiao189/cs-game-demo/util"
-	"github.com/tidwall/gjson"
 	"github.com/xtaci/kcp-go/v5"
 )
 
@@ -34,6 +32,10 @@ type Game struct {
 
 func (g *Game) Update() error {
 	playerSpaceShip := g.SpaceShips[g.PlayerName]
+	if playerSpaceShip == nil {
+		return nil
+	}
+
 	if ebiten.IsKeyPressed(ebiten.KeyA) {
 		playerSpaceShip.Direction = shape.LEFT
 		playerSpaceShip.X -= playerSpaceShip.Speed
@@ -52,8 +54,11 @@ func (g *Game) Update() error {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	// debug
-	ebitenutil.DebugPrint(screen, fmt.Sprintf("%v\n%v %v", g.PlayerName, g.SpaceShips[g.PlayerName].X, g.SpaceShips[g.PlayerName].Y))
+	playerSpaceShip := g.SpaceShips[g.PlayerName]
+	if playerSpaceShip != nil {
+		ebitenutil.DebugPrint(screen,
+			fmt.Sprintf("%v\n%v %v", g.PlayerName, playerSpaceShip.X, playerSpaceShip.Y))
+	}
 
 	for _, spaceShip := range g.SpaceShips {
 		op := &ebiten.DrawImageOptions{}
@@ -90,36 +95,17 @@ func (g *Game) InitGame(name string) {
 
 	// Connect to server host
 	log.Println("Start connecting")
-	raddr := fmt.Sprintf("%v:%v", g.Host, g.Port)
-	clientConn, err := kcp.Dial(raddr)
+	clientConn, err := kcp.Dial(fmt.Sprintf("%v:%v", g.Host, g.Port))
 	util.HandleErr(err)
 	g.ClientConn = clientConn
-	joinData, err := json.Marshal(protocol.Pack{
-		Type: protocol.PlayerJoinType,
-		Data: protocol.JoinData{
-			Name: playerName,
-		},
-	})
+	joinData, err := protocol.GenerateJoinPack(playerName)
 	util.HandleErr(err)
 	_, err = g.ClientConn.Write(joinData)
 	util.HandleErr(err)
 
-	buf := make([]byte, 1024)
-	n, err := g.ClientConn.Read(buf)
-	util.HandleErr(err)
-	spaceshipJson := string(buf[:n])
-
 	// Init game system
 	g.PlayerName = playerName
 	g.SpaceShips = make(map[string]*shape.Spaceship)
-	g.SpaceShips[playerName] = shape.NewSpaceShip(
-		gjson.Get(spaceshipJson, "data.x").Float(),
-		gjson.Get(spaceshipJson, "data.y").Float(),
-		gjson.Get(spaceshipJson, "data.speed").Float(),
-		int(gjson.Get(spaceshipJson, "data.height").Int()),
-		int(gjson.Get(spaceshipJson, "data.width").Int()),
-		gjson.Get(spaceshipJson, "data.name").String(),
-	)
 
 	// Init ebiten window's setting
 	ebiten.SetWindowSize(g.Width, g.Height)
