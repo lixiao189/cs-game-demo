@@ -13,6 +13,6 @@ make run-client1 # start up another client
 
 **服务端**
 
-```
+```bash
 make run-server
 ```
