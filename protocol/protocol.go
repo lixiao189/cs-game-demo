@@ -10,8 +10,10 @@ type ClientPack struct {
 	Data any    `json:"data"`
 }
 
-type JoinData struct {
+type SpaceShipData struct {
 	Name string `json:"name"`
+
+	
 }
 
 /*  ============================================================= */

@@ -105,7 +105,7 @@ func (g *Game) InitGame(name string) {
 	g.ClientConn = clientConn
 	joinData, err := json.Marshal(protocol.ClientPack{
 		Type: protocol.PlayerJoinType,
-		Data: protocol.JoinData{
+		Data: protocol.SpaceShipData{
 			Name: playerName,
 		},
 	})
