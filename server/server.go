@@ -12,6 +12,7 @@ import (
 	"github.com/lixiao189/cs-game-demo/protocol"
 	"github.com/lixiao189/cs-game-demo/util"
 	"github.com/xtaci/kcp-go/v5"
+	"golang.org/x/exp/rand"
 )
 
 func ServerInit(host string, port int) {
@@ -53,8 +54,8 @@ func handlePacket(conn net.Conn) {
 			spaceshipData, err := json.Marshal(protocol.Pack{
 				Type: protocol.InitSpaceshipType,
 				Data: protocol.SpaceshipData{
-					X: 300,
-					Y: 200,
+					X: float64(rand.Intn(500)),
+					Y: float64(rand.Intn(300)),
 					Speed: 3,
 					Height: 64,
 					Width: 32,
