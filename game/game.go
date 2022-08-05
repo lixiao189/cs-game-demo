@@ -87,16 +87,6 @@ func (g *Game) InitGame(name string) {
 	// Player's name
 	playerName := name
 
-	// Init game system
-	g.PlayerName = playerName
-	g.SpaceShips = make(map[string]*shape.Spaceship)
-	g.SpaceShips[playerName] = shape.NewSpaceShip(
-		float64(g.Width)/2,
-		float64(g.Height)/2,
-		3, 64, 32,
-		playerName,
-	)
-
 	// Connect to server host
 	log.Println("Start connecting")
 	raddr := fmt.Sprintf("%v:%v", g.Host, g.Port)
@@ -112,6 +102,16 @@ func (g *Game) InitGame(name string) {
 	util.HandleErr(err)
 	_, err = g.ClientConn.Write(joinData)
 	util.HandleErr(err)
+
+	// Init game system
+	g.PlayerName = playerName
+	g.SpaceShips = make(map[string]*shape.Spaceship)
+	g.SpaceShips[playerName] = shape.NewSpaceShip(
+		float64(g.Width)/2,
+		float64(g.Height)/2,
+		3, 64, 32,
+		playerName,
+	)
 
 	// Init ebiten window's setting
 	ebiten.SetWindowSize(g.Width, g.Height)
