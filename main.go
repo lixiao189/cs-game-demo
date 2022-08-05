@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net"
 	"os"
 
 	"github.com/jessevdk/go-flags"
@@ -24,7 +25,12 @@ func main() {
 
 	if opts.Deamon {
 		// Server initialize
-		server.ServerInit("127.0.0.1", 1234)
+		s := server.Server{
+			Host: "127.0.0.1",
+			Port: 1234,
+			Connections: make(map[string]net.Conn),
+		}
+		s.ServerInit()
 	} else {
 		// Client initialize and startup code
 		game := game.Game{

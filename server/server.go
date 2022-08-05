@@ -15,10 +15,17 @@ import (
 	"golang.org/x/exp/rand"
 )
 
-func ServerInit(host string, port int) {
+type Server struct {
+	Host string
+	Port int
+
+	Connections map[string]net.Conn
+}
+
+func (s *Server) ServerInit() {
 	log.Println("Running on server mode")
 
-	laddr := fmt.Sprintf("%v:%v", host, port)
+	laddr := fmt.Sprintf("%v:%v", s.Host, s.Port)
 	listener, err := kcp.Listen(laddr)
 	if err != nil {
 		defer listener.Close()
@@ -26,16 +33,18 @@ func ServerInit(host string, port int) {
 		os.Exit(-1)
 	}
 
+	// Listenning loop
 	for {
-		serverConn, err := listener.Accept()
+		conn, err := listener.Accept()
 		if err != nil {
 			log.Fatal(err)
 		}
-		go handlePacket(serverConn)
+
+		go s.handlePacket(conn)
 	}
 }
 
-func handlePacket(conn net.Conn) {
+func (s *Server) handlePacket(conn net.Conn) {
 	buf := make([]byte, 1024)
 	for {
 		n, err := conn.Read(buf)
@@ -54,16 +63,21 @@ func handlePacket(conn net.Conn) {
 			spaceshipData, err := json.Marshal(protocol.Pack{
 				Type: protocol.InitSpaceshipType,
 				Data: protocol.SpaceshipData{
-					X: float64(rand.Intn(500)),
-					Y: float64(rand.Intn(300)),
-					Speed: 3,
+					X:      float64(rand.Intn(500)),
+					Y:      float64(rand.Intn(300)),
+					Speed:  3,
 					Height: 64,
-					Width: 32,
-					Name: newPlayerName,
+					Width:  32,
+					Name:   newPlayerName,
 				},
 			})
 			util.HandleErr(err)
 			conn.Write(spaceshipData)
+
+			// Add connection to server 
+			s.Connections[newPlayerName] = conn
+
+			// TODO broadcast new player's space ship info
 		}
 	}
 }
