@@ -16,3 +16,14 @@ make run-client1 # start up another client
 ```bash
 make run-server
 ```
+
+## 前后端交互
+
+为了简单，这里使用 Json 交互
+
+```json
+{
+  "type": "",
+  "data": {}
+}
+```

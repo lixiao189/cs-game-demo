@@ -3,15 +3,17 @@ package game
 // TODO Closing connection gracefully
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"math"
 	"net"
-	"os"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/lixiao189/cs-game-demo/client/shape"
+	"github.com/lixiao189/cs-game-demo/protocol"
+	"github.com/lixiao189/cs-game-demo/util"
 	"github.com/xtaci/kcp-go/v5"
 )
 
@@ -96,20 +98,26 @@ func (g *Game) InitGame(name string) {
 	)
 
 	// Connect to server host
+	log.Println("Start connecting")
 	raddr := fmt.Sprintf("%v:%v", g.Host, g.Port)
 	clientConn, err := kcp.Dial(raddr)
-	if err != nil {
-		log.Fatal(err)
-		os.Exit(-1)
-	}
+	util.HandleErr(err)
 	g.ClientConn = clientConn
+	joinData, err := json.Marshal(protocol.ClientPack{
+		Type: protocol.PlayerJoinType,
+		Data: protocol.JoinData{
+			Name: playerName,
+		},
+	})
+	util.HandleErr(err)
+	_, err = g.ClientConn.Write(joinData)
+	util.HandleErr(err)
 
 	// Init ebiten window's setting
 	ebiten.SetWindowSize(g.Width, g.Height)
 	ebiten.SetWindowTitle("Space ship Demo!")
 
 	// Running game
-	if err := ebiten.RunGame(g); err != nil {
-		log.Fatal(err)
-	}
+	err = ebiten.RunGame(g)
+	util.HandleErr(err)
 }

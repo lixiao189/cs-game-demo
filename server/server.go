@@ -3,11 +3,14 @@ package server
 // TODO Closing connection gracefully
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net"
 	"os"
 
+	"github.com/lixiao189/cs-game-demo/protocol"
+	"github.com/lixiao189/cs-game-demo/util"
 	"github.com/xtaci/kcp-go/v5"
 )
 
@@ -32,15 +35,20 @@ func ServerInit(host string, port int) {
 }
 
 func handlePacket(serverConn net.Conn) {
-	buf := make([]byte, 128)
+	buf := make([]byte, 1024)
 	for {
-		_, err := serverConn.Read(buf)
+		n, err := serverConn.Read(buf)
+		util.HandleErr(err)
+		log.Println(string(buf))
 
-		if err != nil {
-			log.Println(err)
-			return
-		} else {
-			log.Println(string(buf))
+		var clientPack protocol.ClientPack
+		err = json.Unmarshal(buf[:n], &clientPack)
+		util.HandleErr(err)
+		
+		switch clientPack.Type {
+		case protocol.PlayerJoinType:
+			newPlayerName := clientPack.Data.(map[string]interface{})["name"]
+			log.Println(newPlayerName)
 		}
 	}
 }
