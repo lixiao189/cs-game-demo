@@ -11,8 +11,8 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
-	"github.com/lixiao189/cs-game-demo/client/shape"
 	"github.com/lixiao189/cs-game-demo/protocol"
+	"github.com/lixiao189/cs-game-demo/shape"
 	"github.com/lixiao189/cs-game-demo/util"
 	"github.com/xtaci/kcp-go/v5"
 )
@@ -103,9 +103,9 @@ func (g *Game) InitGame(name string) {
 	clientConn, err := kcp.Dial(raddr)
 	util.HandleErr(err)
 	g.ClientConn = clientConn
-	joinData, err := json.Marshal(protocol.ClientPack{
+	joinData, err := json.Marshal(protocol.Pack{
 		Type: protocol.PlayerJoinType,
-		Data: protocol.SpaceshipData{
+		Data: protocol.JoinData{
 			Name: playerName,
 		},
 	})

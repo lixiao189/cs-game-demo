@@ -41,7 +41,7 @@ func handlePacket(serverConn net.Conn) {
 		util.HandleErr(err)
 		log.Println(string(buf))
 
-		var clientPack protocol.ClientPack
+		var clientPack protocol.Pack
 		err = json.Unmarshal(buf[:n], &clientPack)
 		util.HandleErr(err)
 		

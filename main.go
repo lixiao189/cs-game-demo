@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/jessevdk/go-flags"
-	"github.com/lixiao189/cs-game-demo/client/game"
+	"github.com/lixiao189/cs-game-demo/game"
 	"github.com/lixiao189/cs-game-demo/server"
 )
 
