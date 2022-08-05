@@ -95,15 +95,6 @@ func (g *Game) InitGame(name string) {
 		playerName,
 	)
 
-	// Init ebiten window's setting
-	ebiten.SetWindowSize(g.Width, g.Height)
-	ebiten.SetWindowTitle("Space ship Demo!")
-
-	// Running game
-	if err := ebiten.RunGame(g); err != nil {
-		log.Fatal(err)
-	}
-
 	// Connect to server host
 	raddr := fmt.Sprintf("%v:%v", g.Host, g.Port)
 	clientConn, err := kcp.Dial(raddr)
@@ -112,4 +103,13 @@ func (g *Game) InitGame(name string) {
 		os.Exit(-1)
 	}
 	g.ClientConn = clientConn
+
+	// Init ebiten window's setting
+	ebiten.SetWindowSize(g.Width, g.Height)
+	ebiten.SetWindowTitle("Space ship Demo!")
+
+	// Running game
+	if err := ebiten.RunGame(g); err != nil {
+		log.Fatal(err)
+	}
 }
