@@ -7,6 +7,7 @@ import (
 	"log"
 	"math"
 	"net"
+	"sync"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -27,7 +28,9 @@ type Game struct {
 	// Server host info
 	Host       string
 	Port       int
-	ClientConn net.Conn
+	Conn net.Conn
+
+	WG sync.WaitGroup
 }
 
 func (g *Game) Update() error {
@@ -93,15 +96,17 @@ func (g *Game) InitGame(name string) {
 	// Player's name
 	playerName := name
 
-	// Connect to server host
-	log.Println("Start connecting")
+	// Connect to server host and join the game
 	clientConn, err := kcp.Dial(fmt.Sprintf("%v:%v", g.Host, g.Port))
 	util.HandleErr(err)
-	g.ClientConn = clientConn
+	g.Conn = clientConn
 	joinData, err := protocol.GenerateJoinPack(playerName)
 	util.HandleErr(err)
-	_, err = g.ClientConn.Write(joinData)
+	_, err = g.Conn.Write(joinData)
 	util.HandleErr(err)
+
+	// Init daemon gorountine after connecting
+	g.initDaemon()
 
 	// Init game system
 	g.PlayerName = playerName
@@ -114,4 +119,6 @@ func (g *Game) InitGame(name string) {
 	// Running game
 	err = ebiten.RunGame(g)
 	util.HandleErr(err)
+
+	g.WG.Wait()	
 }

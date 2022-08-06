@@ -11,3 +11,9 @@ func HandleErr(err error) {
 		os.Exit(-1)
 	}
 }
+
+func LogErr(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}
