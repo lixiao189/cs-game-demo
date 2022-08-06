@@ -26,34 +26,34 @@ type Game struct {
 	Width  int
 
 	// Server host info
-	Host       string
-	Port       int
+	Host string
+	Port int
 	Conn net.Conn
 
 	WG sync.WaitGroup
 }
 
 func (g *Game) Update() error {
-	playerSpaceShip := g.SpaceShips[g.PlayerName]
-	if playerSpaceShip == nil {
-		return nil
-	}
-
+	var keyPressed ebiten.Key
+	isKeyPressed := true
 	if ebiten.IsKeyPressed(ebiten.KeyA) {
-		playerSpaceShip.Direction = shape.LEFT
-		playerSpaceShip.X -= playerSpaceShip.Speed
+		keyPressed = ebiten.KeyA
 	} else if ebiten.IsKeyPressed(ebiten.KeyD) {
-		playerSpaceShip.Direction = shape.RIGHT
-		playerSpaceShip.X += playerSpaceShip.Speed
+		keyPressed = ebiten.KeyD
 	} else if ebiten.IsKeyPressed(ebiten.KeyW) {
-		playerSpaceShip.Direction = shape.UP
-		playerSpaceShip.Y -= playerSpaceShip.Speed
+		keyPressed = ebiten.KeyW
 	} else if ebiten.IsKeyPressed(ebiten.KeyS) {
-		playerSpaceShip.Direction = shape.DOWN
-		playerSpaceShip.Y += playerSpaceShip.Speed
+		keyPressed = ebiten.KeyS
+	} else {
+		isKeyPressed = false
 	}
 
-
+	// Send the key pressed data to server
+	if isKeyPressed {
+		keyPressData, err := protocol.GenerateKeyPressPack(g.PlayerName, keyPressed)
+		util.LogErr(err)
+		g.Conn.Write(keyPressData)
+	}
 
 	return nil
 }
@@ -122,5 +122,5 @@ func (g *Game) InitGame(name string) {
 	err = ebiten.RunGame(g)
 	util.HandleErr(err)
 
-	g.WG.Wait()	
+	g.WG.Wait()
 }

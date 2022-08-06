@@ -45,7 +45,15 @@ func (s *Server) handlePacket(conn net.Conn) {
 			// TODO Don't accept player's join request after game starting
 			newPlayerName := gjson.Get(packet, "data.name").String()
 			s.Connections[newPlayerName] = conn
+		case protocol.KeyPressType:
+			go s.broadcastKeyPressedData(buf)
 		}
+	}
+}
+
+func (s *Server) broadcastKeyPressedData(packetBuf []byte) {
+	for _, conn := range s.Connections {
+		conn.Write(packetBuf)
 	}
 }
 
