@@ -21,7 +21,7 @@ func (g *Game) receivePack() {
 		util.LogErr(err)
 		pack := string(buf[:n])
 
-		switch gjson.Get(pack, "type").String() {
+		switch gjson.Get(pack, "type").Int() {
 		case protocol.InitSpaceshipType:
 			spaceshipList := gjson.Get(pack, "data").Array()
 			go g.initSpaceship(spaceshipList)

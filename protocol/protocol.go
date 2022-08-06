@@ -5,7 +5,7 @@ import (
 	"math/rand"
 )
 
-func GeneratePack(packType string, data any) ([]byte, error) {
+func GeneratePack(packType int, data any) ([]byte, error) {
 	packBytes, err := json.Marshal(map[string]any{
 		"type": packType,
 		"data": data,
@@ -14,12 +14,16 @@ func GeneratePack(packType string, data any) ([]byte, error) {
 	return packBytes, err
 }
 
-/*  ============================================================= */
-
 const (
 	// client data type
-	PlayerJoinType = "join"
+	PlayerJoinType = 000
+	KeyPressType   = 001
+
+	// server data type
+	InitSpaceshipType = 100
 )
+
+/*  ============================================================= */
 
 func GenerateJoinPack(playerName string) ([]byte, error) {
 	return GeneratePack(PlayerJoinType, map[string]any{
@@ -28,11 +32,6 @@ func GenerateJoinPack(playerName string) ([]byte, error) {
 }
 
 /*  ============================================================= */
-
-const (
-	// server data type
-	InitSpaceshipType = "init-spaceship"
-)
 
 func GenerateSpaceShipPack(playerList []string) ([]byte, error) {
 	spaceshipList := []map[string]any{}

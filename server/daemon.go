@@ -40,7 +40,7 @@ func (s *Server) handlePacket(conn net.Conn) {
 		packet := string(buf)
 		log.Println(packet)
 
-		switch gjson.Get(packet, "type").String() {
+		switch gjson.Get(packet, "type").Int() {
 		case protocol.PlayerJoinType:
 			// TODO Don't accept player's join request after game starting
 			newPlayerName := gjson.Get(packet, "data.name").String()

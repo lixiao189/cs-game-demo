@@ -53,6 +53,8 @@ func (g *Game) Update() error {
 		playerSpaceShip.Y += playerSpaceShip.Speed
 	}
 
+
+
 	return nil
 }
 
