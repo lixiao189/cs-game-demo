@@ -63,9 +63,9 @@ func (s *Server) broadcastSpaceships() {
 	for playName := range s.Connections {
 		playerList = append(playerList, playName)
 	}
+	spaceShipData, err := protocol.GenerateSpaceShipPack(playerList)
+	util.HandleErr(err)
 	for _, conn := range s.Connections {
-		spaceShipData, err := protocol.GenerateSpaceShipPack(playerList)
-		util.HandleErr(err)
 		conn.Write(spaceShipData)
 	}
 }

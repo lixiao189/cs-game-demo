@@ -1,9 +1,8 @@
 package game
 
 import (
-	"log"
-
 	"github.com/lixiao189/cs-game-demo/protocol"
+	"github.com/lixiao189/cs-game-demo/shape"
 	"github.com/lixiao189/cs-game-demo/util"
 	"github.com/tidwall/gjson"
 )
@@ -24,7 +23,18 @@ func (g *Game) receivePack() {
 
 		switch gjson.Get(pack, "type").String() {
 		case protocol.InitSpaceshipType:
-			log.Println(pack) // debug
+			spaceshipList := gjson.Get(pack, "data").Array()
+			go g.initSpaceship(spaceshipList)
 		}
+	}
+}
+
+func (g *Game) initSpaceship(spaceshipList []gjson.Result) {
+	for index := range spaceshipList {
+		name := spaceshipList[index].Get("name").String()
+		x := spaceshipList[index].Get("x").Float()
+		y := spaceshipList[index].Get("y").Float()
+
+		g.SpaceShips[name] = shape.NewSpaceShip(x, y, 3, 64, 32, name)
 	}
 }

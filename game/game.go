@@ -57,11 +57,11 @@ func (g *Game) Update() error {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	playerSpaceShip := g.SpaceShips[g.PlayerName]
-	if playerSpaceShip != nil {
-		ebitenutil.DebugPrint(screen,
-			fmt.Sprintf("%v\n%v %v", g.PlayerName, playerSpaceShip.X, playerSpaceShip.Y))
+	positionInfo := ""
+	for _, spaceShip := range g.SpaceShips {
+		positionInfo += fmt.Sprintf("%v\n%v %v\n", spaceShip.Name, spaceShip.X, spaceShip.Y)
 	}
+	ebitenutil.DebugPrint(screen, positionInfo)
 
 	for _, spaceShip := range g.SpaceShips {
 		op := &ebiten.DrawImageOptions{}
