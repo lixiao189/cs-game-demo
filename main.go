@@ -24,7 +24,7 @@ func main() {
 	if opts.Deamon {
 		// Server initialize
 		s := server.Server{
-			Host: "127.0.0.1",
+			Host: "0.0.0.0",
 			Port: 1234,
 			Connections: make(map[string]net.Conn),
 		}
