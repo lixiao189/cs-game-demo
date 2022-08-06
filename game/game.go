@@ -50,7 +50,7 @@ func (g *Game) Update() error {
 
 	// Send the key pressed data to server
 	if isKeyPressed {
-		keyPressData, err := protocol.GenerateKeyPressPack(g.PlayerName, keyPressed)
+		keyPressData, err := protocol.GenerateKeyPressPack(g.PlayerName, int(keyPressed))
 		util.LogErr(err)
 		g.Conn.Write(keyPressData)
 	}

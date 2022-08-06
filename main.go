@@ -10,8 +10,6 @@ import (
 )
 
 var opts struct {
-	// Slice of bool will append 'true' each time the option
-	// is encountered (can be set multiple times, like -vvv)
 	Deamon bool   `short:"d" long:"deamon" description:"Whether working on deamon server"`
 	Name   string `short:"n" long:"name" description:"Username of the player"`
 }

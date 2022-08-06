@@ -3,8 +3,6 @@ package protocol
 import (
 	"encoding/json"
 	"math/rand"
-
-	"github.com/hajimehoshi/ebiten/v2"
 )
 
 func GeneratePack(packType int, data any) ([]byte, error) {
@@ -25,7 +23,7 @@ const (
 	InitSpaceshipType
 )
 
-func GenerateKeyPressPack(playerName string, key ebiten.Key) ([]byte, error) {
+func GenerateKeyPressPack(playerName string, key int) ([]byte, error) {
 	return GeneratePack(KeyPressType, map[string]any{
 		"name": playerName,
 		"key":  key,
