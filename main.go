@@ -34,7 +34,7 @@ func main() {
 		game := game.Game{
 			Height: 640,
 			Width:  1024,
-			Host:   "127.0.0.1",
+			Host:   "146.56.224.139",
 			Port:   1234,
 		}
 		game.InitGame(opts.Name)

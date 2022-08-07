@@ -11,51 +11,70 @@ import (
 )
 
 func (g *Game) initDaemon() {
-	g.WG.Add(1)
+
+	g.WG.Add(2)
 	{
 		go g.receivePack()
+		go g.handleKeyPressed()
 	}
 }
 
 func (g *Game) receivePack() {
+	defer g.WG.Done()
 	for {
 		buf := make([]byte, 1024)
 		n, err := g.Conn.Read(buf)
 		util.LogErr(err)
 		pack := string(buf[:n])
-		log.Println(pack)
 
 		switch gjson.Get(pack, "type").Int() {
 		case protocol.InitSpaceshipType:
 			spaceshipList := gjson.Get(pack, "data").Array()
 			go g.initSpaceship(spaceshipList)
 		case protocol.KeyPressType:
-			go g.moveSpaceShip(pack)
+			g.KeyPressedChan <- pack
 		}
 	}
 }
 
-func (g *Game) moveSpaceShip(pack string) {
-	keyPressed := ebiten.Key(gjson.Get(pack, "data.key").Int())
-	playerName := gjson.Get(pack, "data.name").String()
+func (g *Game) handleKeyPressed() {
+	defer g.WG.Done()
 
-	if spaceShip := g.SpaceShips[playerName]; spaceShip != nil {
-		switch keyPressed {
-		case ebiten.KeyW:
-			spaceShip.Direction = shape.UP
-			spaceShip.Y -= spaceShip.Speed
-		case ebiten.KeyA:
-			spaceShip.Direction = shape.LEFT
-			spaceShip.X -= spaceShip.Speed
-		case ebiten.KeyS:
-			spaceShip.Direction = shape.DOWN
-			spaceShip.Y += spaceShip.Speed
-		case ebiten.KeyD:
-			spaceShip.Direction = shape.RIGHT
-			spaceShip.X += spaceShip.Speed
+	// debug
+	wcount := 0
+	acount := 0
+	scount := 0
+	dcount := 0
+
+	for {
+		pack := <-g.KeyPressedChan
+
+		keyPressed := ebiten.Key(gjson.Get(pack, "data.key").Int())
+		playerName := gjson.Get(pack, "data.name").String()
+
+		if spaceShip := g.SpaceShips[playerName]; spaceShip != nil {
+			switch keyPressed {
+			case ebiten.KeyW:
+				spaceShip.Direction = shape.UP
+				spaceShip.Y -= spaceShip.Speed
+				wcount++
+			case ebiten.KeyA:
+				spaceShip.Direction = shape.LEFT
+				spaceShip.X -= spaceShip.Speed
+				acount++
+			case ebiten.KeyS:
+				spaceShip.Direction = shape.DOWN
+				spaceShip.Y += spaceShip.Speed
+				scount++
+			case ebiten.KeyD:
+				spaceShip.Direction = shape.RIGHT
+				spaceShip.X += spaceShip.Speed
+				dcount++
+			}
+
+			log.Printf("(%v, %v, %v, %v)\n%v", wcount, acount, scount, dcount, pack)
 		}
 	}
-	
 }
 
 func (g *Game) initSpaceship(spaceshipList []gjson.Result) {
