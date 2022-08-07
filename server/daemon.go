@@ -48,19 +48,24 @@ func (s *Server) handlePacket(conn net.Conn) {
 			s.Connections[newPlayerName] = conn
 		case protocol.KeyPressType:
 			s.KeyPressChan <- packet
-			// go s.broadcastKeyPressedData(buf) // TODO maybe has order bug
 		}
 	}
 }
 
 func (s *Server) broadcastKeyPressedData() {
 	defer s.WG.Done()
+
+	lastTime := time.Now().UnixMilli()
 	for {
-		packet := <- s.KeyPressChan
-		for _, conn := range s.Connections {
-			conn.Write([]byte(packet))
+		packet := <-s.KeyPressChan
+		currentTime := time.Now().UnixMilli()
+		if currentTime-lastTime >= 50 {
+			lastTime = currentTime
+			for _, conn := range s.Connections {
+				conn.Write([]byte(packet))
+			}
 		}
-	}	
+	}
 }
 
 func (s *Server) broadcastSpaceships() {

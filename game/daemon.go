@@ -69,6 +69,6 @@ func (g *Game) initSpaceship(spaceshipList []gjson.Result) {
 		x := spaceshipList[index].Get("x").Float()
 		y := spaceshipList[index].Get("y").Float()
 
-		g.SpaceShips[name] = shape.NewSpaceShip(x, y, 3, 64, 32, name)
+		g.SpaceShips[name] = shape.NewSpaceShip(x, y, 10, 64, 32, name)
 	}
 }
