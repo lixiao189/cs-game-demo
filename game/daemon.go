@@ -1,8 +1,6 @@
 package game
 
 import (
-	"log"
-
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/lixiao189/cs-game-demo/protocol"
 	"github.com/lixiao189/cs-game-demo/shape"
@@ -40,12 +38,6 @@ func (g *Game) receivePack() {
 func (g *Game) handleKeyPressed() {
 	defer g.WG.Done()
 
-	// debug
-	wcount := 0
-	acount := 0
-	scount := 0
-	dcount := 0
-
 	for {
 		pack := <-g.KeyPressedChan
 
@@ -57,22 +49,16 @@ func (g *Game) handleKeyPressed() {
 			case ebiten.KeyW:
 				spaceShip.Direction = shape.UP
 				spaceShip.Y -= spaceShip.Speed
-				wcount++
 			case ebiten.KeyA:
 				spaceShip.Direction = shape.LEFT
 				spaceShip.X -= spaceShip.Speed
-				acount++
 			case ebiten.KeyS:
 				spaceShip.Direction = shape.DOWN
 				spaceShip.Y += spaceShip.Speed
-				scount++
 			case ebiten.KeyD:
 				spaceShip.Direction = shape.RIGHT
 				spaceShip.X += spaceShip.Speed
-				dcount++
 			}
-
-			log.Printf("(%v, %v, %v, %v)\n%v", wcount, acount, scount, dcount, pack)
 		}
 	}
 }
