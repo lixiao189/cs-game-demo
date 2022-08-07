@@ -19,6 +19,7 @@ type Server struct {
 	Listener net.Listener
 	Connections map[string]net.Conn
 	WG sync.WaitGroup
+	KeyPressChan chan string
 }
 
 func (s *Server) ServerInit() {
@@ -28,6 +29,8 @@ func (s *Server) ServerInit() {
 	listener, err := kcp.Listen(laddr)
 	util.HandleErr(err)
 	s.Listener = listener
+
+	s.KeyPressChan = make(chan string, 1000)
 
 	s.initDaemon()
 }

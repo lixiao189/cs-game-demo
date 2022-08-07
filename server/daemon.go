@@ -11,10 +11,11 @@ import (
 )
 
 func (s *Server) initDaemon() {
-	s.WG.Add(2)
+	s.WG.Add(3)
 	{
 		go s.listenDaemon()
 		go s.broadcastSpaceships()
+		go s.broadcastKeyPressedData()
 	}
 
 	s.WG.Wait()
@@ -46,15 +47,20 @@ func (s *Server) handlePacket(conn net.Conn) {
 			newPlayerName := gjson.Get(packet, "data.name").String()
 			s.Connections[newPlayerName] = conn
 		case protocol.KeyPressType:
-			go s.broadcastKeyPressedData(buf)
+			s.KeyPressChan <- packet
+			// go s.broadcastKeyPressedData(buf) // TODO maybe has order bug
 		}
 	}
 }
 
-func (s *Server) broadcastKeyPressedData(packetBuf []byte) {
-	for _, conn := range s.Connections {
-		conn.Write(packetBuf)
-	}
+func (s *Server) broadcastKeyPressedData() {
+	defer s.WG.Done()
+	for {
+		packet := <- s.KeyPressChan
+		for _, conn := range s.Connections {
+			conn.Write([]byte(packet))
+		}
+	}	
 }
 
 func (s *Server) broadcastSpaceships() {

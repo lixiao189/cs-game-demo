@@ -10,7 +10,6 @@ import (
 	"sync"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/lixiao189/cs-game-demo/protocol"
 	"github.com/lixiao189/cs-game-demo/shape"
 	"github.com/lixiao189/cs-game-demo/util"
@@ -31,6 +30,7 @@ type Game struct {
 	Conn net.Conn
 
 	WG sync.WaitGroup
+	KeyPressedChan chan string
 }
 
 func (g *Game) Update() error {
@@ -59,12 +59,6 @@ func (g *Game) Update() error {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	positionInfo := ""
-	for _, spaceShip := range g.SpaceShips {
-		positionInfo += fmt.Sprintf("%v\n%v %v\n", spaceShip.Name, spaceShip.X, spaceShip.Y)
-	}
-	ebitenutil.DebugPrint(screen, positionInfo)
-
 	for _, spaceShip := range g.SpaceShips {
 		op := &ebiten.DrawImageOptions{}
 
@@ -113,6 +107,7 @@ func (g *Game) InitGame(name string) {
 	// Init game system
 	g.PlayerName = playerName
 	g.SpaceShips = make(map[string]*shape.Spaceship)
+	g.KeyPressedChan = make(chan string, 100)	
 
 	// Init ebiten window's setting
 	ebiten.SetWindowSize(g.Width, g.Height)
